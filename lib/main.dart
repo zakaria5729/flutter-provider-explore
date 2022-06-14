@@ -2,6 +2,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,10 +19,14 @@ class MyApp extends StatelessWidget {
       create: (_) => BreadCumbProvider(),
       child: MaterialApp(
         title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
         home: const HomePage(),
+        routes: {
+          '/new': (context) => const Material(),
+        },
       ),
     );
   }
@@ -79,24 +84,18 @@ class BreadCrubsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home Page"),
-      ),
-      body: Wrap(
-        children: breadCrumbs.map((breadCrumb) {
-          return Text(
-            breadCrumb.title,
-            style: TextStyle(
-              color: breadCrumb.isActive ? Colors.blue : Colors.black,
-            ),
-          );
-        }).toList(),
-      ),
+    return Wrap(
+      children: breadCrumbs.map((breadCrumb) {
+        return Text(
+          breadCrumb.title,
+          style: TextStyle(
+            color: breadCrumb.isActive ? Colors.blue : Colors.black,
+          ),
+        );
+      }).toList(),
     );
   }
 }
-
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -107,6 +106,46 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Home Page"),
       ),
+      body: Column(
+        children: [
+          Consumer<BreadCumbProvider>(
+            builder: (context, value, child) {
+              return BreadCrubsWidget(
+                breadCrumbs: value.items,
+              );
+            },
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed("/new");
+            },
+            child: const Text("Add New Bread Crumb"),
+          ),
+          TextButton(
+            onPressed: () {
+              final provider = context.read<BreadCumbProvider>();
+              provider.reset();
+            },
+            child: const Text("Reset"),
+          ),
+        ],
+      ),
     );
+  }
+}
+
+class NewBreadCrumbWidget extends StatefulWidget {
+  const NewBreadCrumbWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<NewBreadCrumbWidget> createState() => _NewBreadCrumbWidgetState();
+}
+
+class _NewBreadCrumbWidgetState extends State<NewBreadCrumbWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
