@@ -1,8 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,7 +23,7 @@ class MyApp extends StatelessWidget {
         ),
         home: const HomePage(),
         routes: {
-          '/new': (context) => const Material(),
+          '/new': (context) => const NewBreadCrumbWidget(),
         },
       ),
     );
@@ -144,8 +142,48 @@ class NewBreadCrumbWidget extends StatefulWidget {
 }
 
 class _NewBreadCrumbWidgetState extends State<NewBreadCrumbWidget> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    _controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Add New Bread Crumb"),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: const InputDecoration(
+              hintText: "Enter a new bread crumb here...",
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final text = _controller.text;
+
+              if (text.isNotEmpty) {
+                final breadCrumb = BreadCrumb(isActive: false, name: text);
+                context.read<BreadCumbProvider>().add(breadCrumb);
+                Navigator.of(context).pop();
+              }
+            },
+            child: const Text("Add New"),
+          ),
+        ],
+      ),
+    );
   }
 }
