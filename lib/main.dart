@@ -2,6 +2,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -13,22 +14,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (_) => BreadCumbProvider(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
       ),
-      home: const MyHomePage(),
     );
   }
 }
 
-class BreadCumb {
+class BreadCrumb {
   bool isActive;
   final String name;
   final String uuid;
 
-  BreadCumb({
+  BreadCrumb({
     required this.isActive,
     required this.name,
   }) : uuid = const Uuid().v4();
@@ -40,22 +44,22 @@ class BreadCumb {
   String get title => name + (isActive ? ' > ' : '');
 
   @override
-  bool operator ==(covariant BreadCumb other) => uuid == other.uuid;
+  bool operator ==(covariant BreadCrumb other) => uuid == other.uuid;
 
   @override
   int get hashCode => uuid.hashCode;
 }
 
 class BreadCumbProvider extends ChangeNotifier {
-  final List<BreadCumb> _items = [];
-  UnmodifiableListView<BreadCumb> get items => UnmodifiableListView(_items);
+  final List<BreadCrumb> _items = [];
+  UnmodifiableListView<BreadCrumb> get items => UnmodifiableListView(_items);
 
-  void add(BreadCumb breadCumb) {
+  void add(BreadCrumb breadCrumb) {
     for (final item in _items) {
       item.activate();
     }
 
-    _items.add(breadCumb);
+    _items.add(breadCrumb);
     notifyListeners();
   }
 
@@ -65,8 +69,37 @@ class BreadCumbProvider extends ChangeNotifier {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class BreadCrubsWidget extends StatelessWidget {
+  const BreadCrubsWidget({
+    Key? key,
+    required this.breadCrumbs,
+  }) : super(key: key);
+
+  final UnmodifiableListView<BreadCrumb> breadCrumbs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Home Page"),
+      ),
+      body: Wrap(
+        children: breadCrumbs.map((breadCrumb) {
+          return Text(
+            breadCrumb.title,
+            style: TextStyle(
+              color: breadCrumb.isActive ? Colors.blue : Colors.black,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
