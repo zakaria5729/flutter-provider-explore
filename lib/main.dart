@@ -40,17 +40,17 @@ class HomePage extends StatelessWidget {
             ),
           ),
           StreamProvider.value(
-            initialData: Minutes(),
-            value: Stream<Minutes>.periodic(
+            initialData: MoreSeconds(),
+            value: Stream<MoreSeconds>.periodic(
               const Duration(seconds: 5),
-              (_) => Minutes(),
+              (_) => MoreSeconds(),
             ),
           ),
         ],
         child: Row(
           children: const [
             SecondsWidget(),
-            MinutesWidget(),
+            MoreSecondsWidget(),
           ],
         ),
       ),
@@ -67,9 +67,9 @@ class Seconds {
 }
 
 @immutable
-class Minutes {
+class MoreSeconds {
   final String value;
-  Minutes() : value = now();
+  MoreSeconds() : value = now();
 }
 
 class SecondsWidget extends StatelessWidget {
@@ -90,18 +90,18 @@ class SecondsWidget extends StatelessWidget {
   }
 }
 
-class MinutesWidget extends StatelessWidget {
-  const MinutesWidget({Key? key}) : super(key: key);
+class MoreSecondsWidget extends StatelessWidget {
+  const MoreSecondsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final minutes = context.watch<Minutes>();
+    final moreSeconds = context.watch<MoreSeconds>();
 
     return Expanded(
       child: Container(
         height: 100,
         color: Colors.blue,
-        child: Text(minutes.value),
+        child: Text(moreSeconds.value),
         padding: const EdgeInsets.all(10),
       ),
     );
